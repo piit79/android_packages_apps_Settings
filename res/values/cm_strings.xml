@@ -44,6 +44,9 @@
     <!-- NFC PreferenceCategory title -->
     <string name="nfc_title_category">NFC</string>
 
+    <!-- CM Updater -->
+    <string name="cmupdate_settings_title">CyanogenMod updates</string>
+
     <!-- About phone screen, CyanogenMod version -->
     <string name="mod_version">CyanogenMod version</string>
     <string name="mod_version_default">Unknown</string>
