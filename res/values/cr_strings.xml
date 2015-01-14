@@ -5,7 +5,18 @@
     <!-- About phone screen, Temasek version -->
     <string name="temasek_version_title">Temasek unofficial version</string>
     <!-- Do NOT translate this -->
-    <string name="temasek_version_default">PREVIEW 4.1</string>
+    <string name="temasek_version_default">Build V5.8</string>
+
+    <!-- temasek spare parts -->
+    <string name="temasek_settings_title">Temasek spare parts</string>
+    <string name="status_bar_title">Status bar</string>
+    <string name="status_bar_style_title">Style</string>
+    <string name="status_bar_settings">Status bar settings</string>
+    <string name="recents_panel_title">Recents panel</string>
+    <string name="recents_panel_settings">Recents panel settings</string>
+    <string name="screen_and_animations_title">Screen and animations</string>
+    <string name="display_settings">Display</string>
+    <string name="display_settings_title">Display settings</string>
 
     <!-- General strings -->
     <string name="attention">Attention</string>
@@ -474,5 +485,12 @@ sword is entered</string>
     <string name="navigation_bar_size_40_dp">40 dp</string>
     <string name="navigation_bar_size_42_dp">42 dp</string>
     <string name="navigation_bar_size_0_dp">0 dp (off)</string>
+
+    <!-- [CHAR LIMIT=40] Sound & display settings screen, title of dialog for picking LCD density -->
+    <!-- Display settings screen, setting option name to change LCD density -->
+    <string name="lcd_density">LCD density</string>
+    <string name="dialog_title_lcd_density">LCD density</string>
+    <!-- Sound & display settings screen, setting option summary to change LCD density -->
+    <string name="lcd_density_summary">xxx DPI</string>
 
 </resources>
