@@ -277,7 +277,8 @@
     <string name="no_filters_title">No filters set</string>
 
     <!-- CM Updater -->
-    <string name="cmupdate_settings_title">CyanogenMod updates</string>
+    <string name="cmupdate_settings_title">System updates</string>
+    <string name="cmupdate_settings_summary">Check for updates of CM12 + Cherry Picks by piit79</string>
 
     <!-- About phone screen, CyanogenMod version -->
     <string name="mod_version">CyanogenMod version</string>
