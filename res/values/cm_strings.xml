@@ -278,7 +278,7 @@
 
     <!-- CM Updater -->
     <string name="cmupdate_settings_title">System updates</string>
-    <string name="cmupdate_settings_summary">Check for updates of CM12 + Cherry Picks by piit79</string>
+    <string name="cmupdate_settings_summary">Check for updates of CherryCM12 by piit79</string>
 
     <!-- About phone screen, CyanogenMod version -->
     <string name="mod_version">CyanogenMod version</string>
