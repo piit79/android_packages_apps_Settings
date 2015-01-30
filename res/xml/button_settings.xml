@@ -53,6 +53,17 @@
             android:fragment="com.android.settings.crdroid.NavBarDimensions"
             android:title="@string/navbar_style_dimen_title" />
 
+        <com.android.settings.cyanogenmod.SystemSettingSwitchPreference
+                android:key="navigation_bar_menu_arrow_keys"
+                android:title="@string/navigation_bar_arrow_keys_title"
+                android:summary="@string/navigation_bar_arrow_keys_summary"
+                android:defaultValue="false" />
+
+        <PreferenceScreen
+            android:key="navigation_bar"
+            android:fragment="com.android.settings.cyanogenmod.NavBar"
+            android:title="@string/navigation_bar_title" />
+
     </PreferenceCategory>
 
     <PreferenceCategory
