@@ -79,14 +79,8 @@ public class OtherSoundSettings extends SettingsPreferenceFragment implements In
     private static final String KEY_POWER_NOTIFICATIONS_VIBRATE = "power_notifications_vibrate";
     private static final String KEY_POWER_NOTIFICATIONS_RINGTONE = "power_notifications_ringtone";
 
-    private static final String KEY_POWER_NOTIFICATIONS_WIRELESS = "power_notifications_wireless";
-    private static final String KEY_POWER_NOTIFICATIONS_WIRELESS_VIBRATE = "power_notifications_wireless_vibrate";
-    private static final String KEY_POWER_NOTIFICATIONS_WIRELESS_RINGTONE = "power_notifications_wireless_ringtone";
-
     // Request code for power notification ringtone picker
     private static final int REQUEST_CODE_POWER_NOTIFICATIONS_RINGTONE = 1;
-    // Request code for wireless charging started ringtone picker
-    private static final int REQUEST_CODE_POWER_NOTIFICATIONS_WIRELESS_RINGTONE = 2;
 
     // Used for power notification uri string if set to silent
     private static final String POWER_NOTIFICATIONS_SILENT_URI = "silent";
@@ -94,10 +88,6 @@ public class OtherSoundSettings extends SettingsPreferenceFragment implements In
     private SwitchPreference mPowerSounds;
     private SwitchPreference mPowerSoundsVibrate;
     private Preference mPowerSoundsRingtone;
-
-    private SwitchPreference mPowerSoundsWireless;
-    private SwitchPreference mPowerSoundsWirelessVibrate;
-    private Preference mPowerSoundsWirelessRingtone;
 
     private static final SettingPref PREF_DIAL_PAD_TONES = new SettingPref(
             TYPE_SYSTEM, KEY_DIAL_PAD_TONES, System.DTMF_TONE_WHEN_DIALING, DEFAULT_ON) {
@@ -261,39 +251,6 @@ public class OtherSoundSettings extends SettingsPreferenceFragment implements In
             }
         }
 
-        // wireless charging started notification sounds
-        mPowerSoundsWireless = (SwitchPreference) findPreference(KEY_POWER_NOTIFICATIONS_WIRELESS);
-        mPowerSoundsWireless.setChecked(Global.getInt(getContentResolver(),
-                Global.WIRELESS_CHARGING_STARTED_NOTIFICATION_ENABLED, 0) != 0);
-        mPowerSoundsWirelessVibrate = (SwitchPreference) findPreference(KEY_POWER_NOTIFICATIONS_WIRELESS_VIBRATE);
-        mPowerSoundsWirelessVibrate.setChecked(Global.getInt(getContentResolver(),
-                Global.WIRELESS_CHARGING_STARTED_VIBRATE, 0) != 0);
-        if (vibrator == null || !vibrator.hasVibrator()) {
-            removePreference(KEY_POWER_NOTIFICATIONS_WIRELESS_VIBRATE);
-        }
-
-        mPowerSoundsWirelessRingtone = findPreference(KEY_POWER_NOTIFICATIONS_WIRELESS_RINGTONE);
-        String currentWirelessChargingRingtonePath =
-                Global.getString(getContentResolver(), Global.WIRELESS_CHARGING_STARTED_SOUND);
-
-        // set to default notification if we don't yet have one
-        if (currentWirelessChargingRingtonePath == null) {
-                currentWirelessChargingRingtonePath = System.DEFAULT_NOTIFICATION_URI.toString();
-                Global.putString(getContentResolver(),
-                        Global.WIRELESS_CHARGING_STARTED_SOUND, currentWirelessChargingRingtonePath);
-        }
-        // is it silent ?
-        if (currentWirelessChargingRingtonePath.equals(POWER_NOTIFICATIONS_SILENT_URI)) {
-            mPowerSoundsWirelessRingtone.setSummary(
-                    getString(R.string.power_notifications_ringtone_silent));
-        } else {
-            final Ringtone wirelessRingtone =
-                    RingtoneManager.getRingtone(getActivity(), Uri.parse(currentWirelessChargingRingtonePath));
-            if (wirelessRingtone != null) {
-                mPowerSoundsWirelessRingtone.setSummary(wirelessRingtone.getTitle(getActivity()));
-            }
-        }
-
         for (SettingPref pref : PREFS) {
             pref.init(this);
         }
@@ -327,20 +284,6 @@ public class OtherSoundSettings extends SettingsPreferenceFragment implements In
             launchNotificationSoundPicker(REQUEST_CODE_POWER_NOTIFICATIONS_RINGTONE,
                     Global.getString(getContentResolver(),
                             Global.POWER_NOTIFICATIONS_RINGTONE));
-        } else if (preference == mPowerSoundsWireless) {
-            Global.putInt(getContentResolver(),
-                    Global.WIRELESS_CHARGING_STARTED_NOTIFICATION_ENABLED,
-                    mPowerSoundsWireless.isChecked() ? 1 : 0);
-
-        } else if (preference == mPowerSoundsWirelessVibrate) {
-            Global.putInt(getContentResolver(),
-                    Global.WIRELESS_CHARGING_STARTED_VIBRATE,
-                    mPowerSoundsWirelessVibrate.isChecked() ? 1 : 0);
-
-        } else if (preference == mPowerSoundsWirelessRingtone) {
-            launchNotificationSoundPicker(REQUEST_CODE_POWER_NOTIFICATIONS_WIRELESS_RINGTONE,
-                    Global.getString(getContentResolver(),
-                            Global.WIRELESS_CHARGING_STARTED_SOUND));
         } else {
             // If we didn't handle it, let preferences handle it.
             return super.onPreferenceTreeClick(preferenceScreen, preference);
@@ -430,7 +373,7 @@ public class OtherSoundSettings extends SettingsPreferenceFragment implements In
         startActivityForResult(intent, code);
     }
 
-    private void setPowerNotificationRingtone(int requestCode, Intent intent) {
+    private void setPowerNotificationRingtone(Intent intent) {
         final Uri uri = intent.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
 
         final String toneName;
@@ -446,24 +389,17 @@ public class OtherSoundSettings extends SettingsPreferenceFragment implements In
             toneUriPath = POWER_NOTIFICATIONS_SILENT_URI;
         }
 
-        if (requestCode == REQUEST_CODE_POWER_NOTIFICATIONS_RINGTONE) {
-            mPowerSoundsRingtone.setSummary(toneName);
-            Global.putString(getContentResolver(),
-                    Global.POWER_NOTIFICATIONS_RINGTONE, toneUriPath);
-        } else if (requestCode == REQUEST_CODE_POWER_NOTIFICATIONS_WIRELESS_RINGTONE) {
-            mPowerSoundsWirelessRingtone.setSummary(toneName);
-            Global.putString(getContentResolver(),
-                    Global.WIRELESS_CHARGING_STARTED_SOUND, toneUriPath);
-        }
+        mPowerSoundsRingtone.setSummary(toneName);
+        Global.putString(getContentResolver(),
+                Global.POWER_NOTIFICATIONS_RINGTONE, toneUriPath);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_CODE_POWER_NOTIFICATIONS_RINGTONE:
-            case REQUEST_CODE_POWER_NOTIFICATIONS_WIRELESS_RINGTONE:
                 if (resultCode == Activity.RESULT_OK) {
-                    setPowerNotificationRingtone(requestCode, data);
+                    setPowerNotificationRingtone(data);
                 }
                 break;
             default:
