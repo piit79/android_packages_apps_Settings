@@ -266,13 +266,13 @@ public class AppNotificationSettings extends SettingsPreferenceFragment {
         final boolean isSystemPkg = Utils.isSystemPackage(pm, info);
 
         if (isSystemPkg || !getLockscreenNotificationsEnabled()) {
-            prefs.removePreference(mShowNoOngoingOnKeyguard);
-            prefs.removePreference(mShowOnKeyguard);
+            getPreferenceScreen().removePreference(mShowNoOngoingOnKeyguard);
+            getPreferenceScreen().removePreference(mShowOnKeyguard);
         }
 
         if (isSystemPkg) {
-            prefs.removePreference(mBlock);
-            prefs.removePreference(mHeadsUp);
+            getPreferenceScreen().removePreference(mBlock);
+            getPreferenceScreen().removePreference(mHeadsUp);
             mPriority.setDependency(null); // don't have it depend on a preference that's gone
         }
 
