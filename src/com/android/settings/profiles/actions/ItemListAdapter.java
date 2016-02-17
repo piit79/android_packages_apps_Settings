@@ -41,7 +41,8 @@ public class ItemListAdapter extends ArrayAdapter<Item> {
         APP_GROUP_ITEM,
         BRIGHTNESS_ITEM,
         DOZEMODE_ITEM,
-        NOTIFICATIONLIGHTMODE_ITEM
+        NOTIFICATIONLIGHTMODE_ITEM,
+        TAPTOWAKEMODE_ITEM
     }
 
     public ItemListAdapter(Context context, List<Item> items) {

@@ -84,6 +84,7 @@ import com.android.settings.profiles.actions.item.LockModeItem;
 import com.android.settings.profiles.actions.item.NotificationLightModeItem;
 import com.android.settings.profiles.actions.item.ProfileNameItem;
 import com.android.settings.profiles.actions.item.RingModeItem;
+import com.android.settings.profiles.actions.item.TapToWakeModeItem;
 import com.android.settings.profiles.actions.item.TriggerItem;
 import com.android.settings.profiles.actions.item.VolumeStreamItem;
 import com.android.settings.Utils;
@@ -125,6 +126,7 @@ public class SetupActionsFragment extends SettingsPreferenceFragment
     private static final int DIALOG_REMOVE_PROFILE = 10;
 
     private static final int DIALOG_NOTIFICATION_LIGHT_MODE = 11;
+    private static final int DIALOG_TAP_TO_WAKE_MODE = 12;
 
     private int mLastSelectedPosition = -1;
     private Item mSelectedItem;
@@ -153,6 +155,11 @@ public class SetupActionsFragment extends SettingsPreferenceFragment
             Profile.NotificationLightMode.DEFAULT,
             Profile.NotificationLightMode.ENABLE,
             Profile.NotificationLightMode.DISABLE
+    };
+    private static final int[] TAP_TO_WAKE_MAPPING = new int[] {
+            Profile.TapToWakeMode.DEFAULT,
+            Profile.TapToWakeMode.ENABLE,
+            Profile.TapToWakeMode.DISABLE
     };
     private List<Item> mItems = new ArrayList<Item>();
 
@@ -267,6 +274,11 @@ public class SetupActionsFragment extends SettingsPreferenceFragment
         if (getResources().getBoolean(
                 com.android.internal.R.bool.config_intrusiveNotificationLed)) {
             mItems.add(new NotificationLightModeItem(mProfile));
+        }
+
+        if (getResources().getBoolean(
+                com.android.internal.R.bool.config_supportDoubleTapWake)) {
+            mItems.add(new TapToWakeModeItem(mProfile));
         }
 
         // app groups
@@ -538,6 +550,9 @@ public class SetupActionsFragment extends SettingsPreferenceFragment
             case DIALOG_NOTIFICATION_LIGHT_MODE:
                 return requestNotificationLightModeDialog();
 
+            case DIALOG_TAP_TO_WAKE_MODE:
+                return requestTapToWakeModeDialog();
+
             case DIALOG_RING_MODE:
                 return requestRingModeDialog(((RingModeItem) mSelectedItem).getSettings());
 
@@ -676,6 +691,35 @@ public class SetupActionsFragment extends SettingsPreferenceFragment
                     @Override
                     public void onClick(DialogInterface dialog, int item) {
                         mProfile.setNotificationLightMode(NOTIFICATION_LIGHT_MAPPING[item]);
+                        updateProfile();
+                        mAdapter.notifyDataSetChanged();
+                        dialog.dismiss();
+                    }
+                });
+
+        builder.setNegativeButton(android.R.string.cancel, null);
+        return builder.create();
+    }
+
+    private AlertDialog requestTapToWakeModeDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final String[] tapToWakeEntries =
+                getResources().getStringArray(R.array.profile_tap_to_wake_entries);
+
+        int defaultIndex = 0; // no action
+        for (int i = 0; i < TAP_TO_WAKE_MAPPING.length; i++) {
+            if (TAP_TO_WAKE_MAPPING[i] == mProfile.getTapToWakeMode()) {
+                defaultIndex = i;
+                break;
+            }
+        }
+
+        builder.setTitle(R.string.tap_to_wake);
+        builder.setSingleChoiceItems(tapToWakeEntries, defaultIndex,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        mProfile.setTapToWakeMode(TAP_TO_WAKE_MAPPING[item]);
                         updateProfile();
                         mAdapter.notifyDataSetChanged();
                         dialog.dismiss();
@@ -1130,6 +1174,8 @@ public class SetupActionsFragment extends SettingsPreferenceFragment
             showDialog(DIALOG_DOZE_MODE);
         } else if (itemAtPosition instanceof NotificationLightModeItem) {
             showDialog(DIALOG_NOTIFICATION_LIGHT_MODE);
+        } else if (itemAtPosition instanceof TapToWakeModeItem) {
+            showDialog(DIALOG_TAP_TO_WAKE_MODE);
         } else if (itemAtPosition instanceof RingModeItem) {
             showDialog(DIALOG_RING_MODE);
         } else if (itemAtPosition instanceof ConnectionOverrideItem) {
